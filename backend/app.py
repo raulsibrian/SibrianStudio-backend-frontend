@@ -11,6 +11,8 @@ import jwt
 import datetime
 import certifi
 import os
+import requests
+import base64
 
 app = Flask(__name__)
 CORS(app)
@@ -31,32 +33,16 @@ except Exception as e:
     print(f"Error de conexión: {e}")
 
 # Función auxiliar para optimizar y comprimir imágenes automáticamente
-def comprimir_y_guardar_imagen(archivo_imagen, carpeta_destino, ancho_maximo=1920):
-    filename = secure_filename(archivo_imagen.filename)
-    nombre_base, _ = os.path.splitext(filename)
-    nombre_final = f"{nombre_base}_{datetime.datetime.utcnow().strftime('%H%M%S')}.jpg"
-    ruta_guardado = os.path.join(carpeta_destino, nombre_final)
-    
-    try:
-        imagen = Image.open(archivo_imagen)
-        # Convertir a RGB si está en formato RGBA (ej. PNG con transparencia) para evitar errores al guardar como JPG
-        if imagen.mode in ("RGBA", "P"):
-            imagen = imagen.convert("RGB")
-            
-        # Redimensionar proporcionalmente si el ancho supera el máximo permitido
-        if imagen.width > ancho_maximo:
-            proporcion = ancho_maximo / float(imagen.width)
-            nuevo_alto = int(float(imagen.height) * proporcion)
-            imagen = imagen.resize((ancho_maximo, nuevo_alto), Image.Resampling.LANCZOS)
-            
-        # Guardar comprimido con calidad óptima (85%)
-        imagen.save(ruta_guardado, "JPEG", quality=85, optimize=True)
-        return nombre_final
-    except Exception as e:
-        print(f"Error procesando imagen: {e}")
-        # Plan B: Guardar directo si falla la compresión
-        archivo_imagen.save(ruta_guardado)
-        return filename
+def subir_imagen_nube(archivo_imagen):
+    image_data = archivo_imagen.read()
+    respuesta = requests.post(
+        "https://api.imgbb.com/1/upload",
+        data={
+            "key": "PEGA_TU_API_KEY_AQUI",
+            "image": base64.b64encode(image_data)
+        }
+    )
+    return respuesta.json()["data"]["url"]
 
 @app.route("/api/auth/register", methods=["POST"])
 def register():
@@ -196,8 +182,7 @@ def crear_proyecto(current_user):
     for archivo in archivos:
         if archivo and archivo.filename:
             # Comprimir y optimizar automáticamente
-            nombre_final = comprimir_y_guardar_imagen(archivo, app.config['UPLOAD_FOLDER'])
-            imagenes_urls.append(f"https://sibrianstudio-backend-frontend.onrender.com/uploads/{nombre_final}")
+            imagenes_urls.append(subir_imagen_nube(archivo))
 
     nuevo_proyecto = {
         "titulo": titulo,
@@ -228,8 +213,7 @@ def editar_proyecto(current_user, id):
     if archivos and archivos[0].filename:
         imagenes_urls = []
         for archivo in archivos:
-            nombre_final = comprimir_y_guardar_imagen(archivo, app.config['UPLOAD_FOLDER'])
-            imagenes_urls.append(f"https://sibrianstudio-backend-frontend.onrender.com/uploads/{nombre_final}")
+            imagenes_urls.append(subir_imagen_nube(archivo))
             
         datos_actualizados["imagenes_urls"] = imagenes_urls
         datos_actualizados["imagen_url"] = imagenes_urls[0]
@@ -322,9 +306,8 @@ def actualizar_configuracion(current_user):
     archivo = request.files.get("hero_image")
     if archivo and archivo.filename:
         # Optimizar imagen de fondo principal también
-        nombre_final = comprimir_y_guardar_imagen(archivo, app.config['UPLOAD_FOLDER'])
-        datos["hero_image_url"] = f"https://sibrianstudio-backend-frontend.onrender.com/uploads/{nombre_final}"
-
+        datos["hero_image_url"] = subir_imagen_nube(archivo)
+        
     db.configuracion.update_one({}, {"$set": datos}, upsert=True)
     return jsonify({"message": "Configuración actualizada"}), 200
 
