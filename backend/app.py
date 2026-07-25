@@ -35,14 +35,22 @@ except Exception as e:
 # Función auxiliar para optimizar y comprimir imágenes automáticamente
 def subir_imagen_nube(archivo_imagen):
     image_data = archivo_imagen.read()
+    
+    # Enviar como form-data usando 'data' en lugar de JSON crudo
     respuesta = requests.post(
         "https://api.imgbb.com/1/upload",
         data={
-            "key": "PEGA_TU_API_KEY_AQUI",
+            "key": "0c9e8c226258d4ce0d95ef0623a784b8",
             "image": base64.b64encode(image_data)
         }
     )
-    return respuesta.json()["data"]["url"]
+    
+    resultado = respuesta.json()
+    if resultado.get("success"):
+        # Extrae el enlace permanente directo de la respuesta JSON de ImgBB
+        return resultado["data"]["url"]
+    else:
+        raise Exception(f"Error al subir a ImgBB: {resultado}")
 
 @app.route("/api/auth/register", methods=["POST"])
 def register():
@@ -307,7 +315,7 @@ def actualizar_configuracion(current_user):
     if archivo and archivo.filename:
         # Optimizar imagen de fondo principal también
         datos["hero_image_url"] = subir_imagen_nube(archivo)
-        
+
     db.configuracion.update_one({}, {"$set": datos}, upsert=True)
     return jsonify({"message": "Configuración actualizada"}), 200
 
