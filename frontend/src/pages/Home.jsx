@@ -12,7 +12,7 @@ const CarruselImagenes = ({ imagenes, titulo }) => {
   }, [imagenes]);
   if (!imagenes || imagenes.length === 0) return null;
   return (
-    <img src={imagenes[indice]} alt={titulo} style={{ width: '100%', height: '220px', objectFit: 'cover', transition: 'opacity 0.5s ease-in-out' }} />
+    <img src={imagenes[indice].replace('http://127.0.0.1:5000', 'https://sibrianstudio-backend-frontend.onrender.com')} alt={titulo} style={{ width: '100%', height: '220px', objectFit: 'cover', transition: 'opacity 0.5s ease-in-out' }} />
   );
 };
 
@@ -41,7 +41,7 @@ export default function Home() {
       {/* Hero Section */}
       <div style={{ 
         background: config.hero_image_url 
-          ? `linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url(${config.hero_image_url}) center/cover no-repeat` 
+          ? `linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url(${config.hero_image_url.replace('http://127.0.0.1:5000', 'https://sibrianstudio-backend-frontend.onrender.com')}) center/cover no-repeat`
           : '#1a1a1a', 
         color: '#fff', 
         padding: '120px 20px' 

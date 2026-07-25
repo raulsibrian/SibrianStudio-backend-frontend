@@ -19,7 +19,7 @@ export default function Portafolio() {
         {proyectos.map(proy => (
           <Link to={`/proyecto/${proy._id}`} key={proy._id} style={{ textDecoration: 'none', color: 'inherit' }}>
             <div style={{ border: '1px solid #ddd', borderRadius: '8px', overflow: 'hidden', cursor: 'pointer' }}>
-              {proy.imagen_url && <img src={proy.imagen_url} alt={proy.titulo} style={{ width: '100%', height: '220px', objectFit: 'cover' }} />}
+              {proy.imagen_url && <img src={proy.imagen_url.replace('http://127.0.0.1:5000', 'https://sibrianstudio-backend-frontend.onrender.com')} alt={proy.titulo} style={{ width: '100%', height: '220px', objectFit: 'cover' }} />}
               <div style={{ padding: '15px' }}>
                 <h3 style={{ margin: '0' }}>{proy.titulo}</h3>
               </div>
