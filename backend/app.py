@@ -34,23 +34,27 @@ except Exception as e:
 
 # Función auxiliar para optimizar y comprimir imágenes automáticamente
 def subir_imagen_nube(archivo_imagen):
-    image_data = archivo_imagen.read()
-    
-    # Enviar como form-data usando 'data' en lugar de JSON crudo
-    respuesta = requests.post(
-        "https://api.imgbb.com/1/upload",
-        data={
-            "key": "0c9e8c226258d4ce0d95ef0623a784b8",
-            "image": base64.b64encode(image_data)
-        }
-    )
-    
-    resultado = respuesta.json()
-    if resultado.get("success"):
-        # Extrae el enlace permanente directo de la respuesta JSON de ImgBB
-        return resultado["data"]["url"]
-    else:
-        raise Exception(f"Error al subir a ImgBB: {resultado}")
+    try:
+        image_data = archivo_imagen.read()
+        # Añadimos un timeout de 15 segundos para evitar que la página se bloquee indefinidamente
+        respuesta = requests.post(
+            "https://api.imgbb.com/1/upload",
+            data={
+                "key": "0c9e8c226258d4ce0d95ef0623a784b8",
+                "image": base64.b64encode(image_data)
+            },
+            timeout=15
+        )
+        
+        resultado = respuesta.json()
+        if resultado.get("success"):
+            return resultado["data"]["url"]
+        else:
+            print(f"Error de ImgBB: {resultado}")
+            return None
+    except Exception as e:
+        print(f"Excepción al conectar con ImgBB: {e}")
+        return None
 
 @app.route("/api/auth/register", methods=["POST"])
 def register():
@@ -189,8 +193,9 @@ def crear_proyecto(current_user):
     
     for archivo in archivos:
         if archivo and archivo.filename:
-            # Comprimir y optimizar automáticamente
-            imagenes_urls.append(subir_imagen_nube(archivo))
+            url_nube = subir_imagen_nube(archivo)
+            if url_nube:
+                imagenes_urls.append(url_nube)
 
     nuevo_proyecto = {
         "titulo": titulo,
@@ -218,13 +223,12 @@ def editar_proyecto(current_user, id):
         "descripcion": descripcion
     }
     
-    if archivos and archivos[0].filename:
-        imagenes_urls = []
-        for archivo in archivos:
-            imagenes_urls.append(subir_imagen_nube(archivo))
+    for archivo in archivos:
+        if archivo and archivo.filename:
+            url_nube = subir_imagen_nube(archivo)
+            if url_nube:
+                imagenes_urls.append(url_nube)
             
-        datos_actualizados["imagenes_urls"] = imagenes_urls
-        datos_actualizados["imagen_url"] = imagenes_urls[0]
         
     db.proyectos.update_one({"_id": ObjectId(id)}, {"$set": datos_actualizados})
     return jsonify({"message": "Proyecto actualizado"}), 200
