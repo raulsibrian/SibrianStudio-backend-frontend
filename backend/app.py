@@ -130,7 +130,7 @@ def manejar_cotizaciones(current_user):
             filename = secure_filename(archivo.filename)
             nombre_final = f"{str(current_user['_id'])}_{filename}"
             archivo.save(os.path.join(app.config['UPLOAD_FOLDER'], nombre_final))
-            archivo_url = f"http://127.0.0.1:5000/uploads/{nombre_final}"
+            archivo_url = f"https://sibrianstudio-backend-frontend.onrender.com/uploads/{nombre_final}"
 
         nueva_cotizacion = {
             "usuario_id": str(current_user["_id"]),
@@ -197,7 +197,7 @@ def crear_proyecto(current_user):
         if archivo and archivo.filename:
             # Comprimir y optimizar automáticamente
             nombre_final = comprimir_y_guardar_imagen(archivo, app.config['UPLOAD_FOLDER'])
-            imagenes_urls.append(f"http://127.0.0.1:5000/uploads/{nombre_final}")
+            imagenes_urls.append(f"https://sibrianstudio-backend-frontend.onrender.com/uploads/{nombre_final}")
 
     nuevo_proyecto = {
         "titulo": titulo,
@@ -229,7 +229,7 @@ def editar_proyecto(current_user, id):
         imagenes_urls = []
         for archivo in archivos:
             nombre_final = comprimir_y_guardar_imagen(archivo, app.config['UPLOAD_FOLDER'])
-            imagenes_urls.append(f"http://127.0.0.1:5000/uploads/{nombre_final}")
+            imagenes_urls.append(f"https://sibrianstudio-backend-frontend.onrender.com/uploads/{nombre_final}")
             
         datos_actualizados["imagenes_urls"] = imagenes_urls
         datos_actualizados["imagen_url"] = imagenes_urls[0]
@@ -323,7 +323,7 @@ def actualizar_configuracion(current_user):
     if archivo and archivo.filename:
         # Optimizar imagen de fondo principal también
         nombre_final = comprimir_y_guardar_imagen(archivo, app.config['UPLOAD_FOLDER'])
-        datos["hero_image_url"] = f"http://127.0.0.1:5000/uploads/{nombre_final}"
+        datos["hero_image_url"] = f"https://sibrianstudio-backend-frontend.onrender.com/uploads/{nombre_final}"
 
     db.configuracion.update_one({}, {"$set": datos}, upsert=True)
     return jsonify({"message": "Configuración actualizada"}), 200
