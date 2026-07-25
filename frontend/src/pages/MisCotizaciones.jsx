@@ -7,7 +7,7 @@ export default function MisCotizaciones() {
     const cargarCotizaciones = async () => {
       const token = localStorage.getItem('token');
       try {
-        const response = await fetch('http://127.0.0.1:5000/api/cotizaciones', {
+        const response = await fetch('https://sibrianstudio-backend-frontend.onrender.com/api/cotizaciones', {
           headers: { 'Authorization': `Bearer ${token}` }
         });
         

@@ -36,7 +36,7 @@ export default function Cotizar() {
     }
 
     try {
-      const res = await fetch('http://127.0.0.1:5000/api/cotizaciones', {
+      const res = await fetch('https://sibrianstudio-backend-frontend.onrender.com/api/cotizaciones', {
         method: 'POST',
         headers: { 'Authorization': `Bearer ${token}` },
         body: formData

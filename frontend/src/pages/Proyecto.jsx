@@ -7,7 +7,7 @@ export default function Proyecto() {
 
   useEffect(() => {
     const cargarProyecto = async () => {
-      const res = await fetch(`http://127.0.0.1:5000/api/proyectos/${id}`);
+      const res = await fetch(`https://sibrianstudio-backend-frontend.onrender.com/api/proyectos/${id}`);
       if (res.ok) setProyecto(await res.json());
     };
     cargarProyecto();

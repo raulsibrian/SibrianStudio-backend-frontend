@@ -22,10 +22,10 @@ export default function Home() {
 
   useEffect(() => {
     const cargarDatos = async () => {
-      const resConfig = await fetch('http://127.0.0.1:5000/api/configuracion');
+      const resConfig = await fetch('https://sibrianstudio-backend-frontend.onrender.com/api/configuracion');
       if (resConfig.ok) setConfig(await resConfig.json());
 
-      const resProy = await fetch('http://127.0.0.1:5000/api/proyectos');
+      const resProy = await fetch('https://sibrianstudio-backend-frontend.onrender.com/api/proyectos');
       if (resProy.ok) {
         const data = await resProy.json();
         setDestacados(data.filter(p => p.destacado).slice(0, 3));

@@ -45,7 +45,7 @@ export default function Admin() {
   const cargarCotizaciones = async () => {
     const token = localStorage.getItem('token');
     try {
-      const res = await fetch('http://127.0.0.1:5000/api/admin/cotizaciones', {
+      const res = await fetch('https://sibrianstudio-backend-frontend.onrender.com/api/admin/cotizaciones', {
         headers: { 'Authorization': `Bearer ${token}` }
       });
       if (res.ok) setCotizaciones(await res.json());
@@ -56,7 +56,7 @@ export default function Admin() {
 
   const cambiarEstadoCotizacion = async (id, nuevoEstado) => {
     const token = localStorage.getItem('token');
-    const res = await fetch(`http://127.0.0.1:5000/api/admin/cotizaciones/${id}`, {
+    const res = await fetch(`https://sibrianstudio-backend-frontend.onrender.com/api/admin/cotizaciones/${id}`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
       body: JSON.stringify({ estado: nuevoEstado })
@@ -67,7 +67,7 @@ export default function Admin() {
   // --- Funciones Proyectos ---
   const cargarProyectos = async () => {
     try {
-      const res = await fetch('http://127.0.0.1:5000/api/proyectos');
+      const res = await fetch('https://sibrianstudio-backend-frontend.onrender.com/api/proyectos');
       if (res.ok) setProyectos(await res.json());
     } catch (error) {
       console.error("Error al cargar proyectos", error);
@@ -85,7 +85,7 @@ export default function Admin() {
       formData.append('imagenes', imagenes[i]);
     }
 
-    const url = proyectoEditando ? `http://127.0.0.1:5000/api/proyectos/${proyectoEditando}` : 'http://127.0.0.1:5000/api/proyectos';
+    const url = proyectoEditando ? `https://sibrianstudio-backend-frontend.onrender.com/api/proyectos/${proyectoEditando}` : 'https://sibrianstudio-backend-frontend.onrender.com/api/proyectos';
     const metodo = proyectoEditando ? 'PUT' : 'POST';
 
     const res = await fetch(url, { method: metodo, headers: { 'Authorization': `Bearer ${token}` }, body: formData });
@@ -114,13 +114,13 @@ export default function Admin() {
   const eliminarProyecto = async (id) => {
     if (!window.confirm("¿Seguro que deseas eliminar este proyecto?")) return;
     const token = localStorage.getItem('token');
-    const res = await fetch(`http://127.0.0.1:5000/api/proyectos/${id}`, { method: 'DELETE', headers: { 'Authorization': `Bearer ${token}` } });
+    const res = await fetch(`https://sibrianstudio-backend-frontend.onrender.com/api/proyectos/${id}`, { method: 'DELETE', headers: { 'Authorization': `Bearer ${token}` } });
     if (res.ok) cargarProyectos();
   };
 
   const toggleDestacado = async (id) => {
     const token = localStorage.getItem('token');
-    const res = await fetch(`http://127.0.0.1:5000/api/proyectos/${id}/destacar`, { method: 'PUT', headers: { 'Authorization': `Bearer ${token}` } });
+    const res = await fetch(`https://sibrianstudio-backend-frontend.onrender.com/api/proyectos/${id}/destacar`, { method: 'PUT', headers: { 'Authorization': `Bearer ${token}` } });
     if (res.ok) cargarProyectos();
   };
 
@@ -128,7 +128,7 @@ export default function Admin() {
   const cargarUsuarios = async () => {
     const token = localStorage.getItem('token');
     try {
-      const res = await fetch('http://127.0.0.1:5000/api/admin/usuarios', {
+      const res = await fetch('https://sibrianstudio-backend-frontend.onrender.com/api/admin/usuarios', {
         headers: { 'Authorization': `Bearer ${token}` }
       });
       if (res.ok) {
@@ -144,7 +144,7 @@ export default function Admin() {
 
   const cambiarRol = async (id, nuevoRol) => {
     const token = localStorage.getItem('token');
-    const res = await fetch(`http://127.0.0.1:5000/api/admin/usuarios/${id}`, {
+    const res = await fetch(`https://sibrianstudio-backend-frontend.onrender.com/api/admin/usuarios/${id}`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
       body: JSON.stringify({ role: nuevoRol })
@@ -155,7 +155,7 @@ export default function Admin() {
   const eliminarUsuario = async (id) => {
     if (!window.confirm("¿Seguro que deseas eliminar este usuario?")) return;
     const token = localStorage.getItem('token');
-    const res = await fetch(`http://127.0.0.1:5000/api/admin/usuarios/${id}`, {
+    const res = await fetch(`https://sibrianstudio-backend-frontend.onrender.com/api/admin/usuarios/${id}`, {
       method: 'DELETE',
       headers: { 'Authorization': `Bearer ${token}` }
     });
@@ -169,7 +169,7 @@ export default function Admin() {
   // --- Funciones Configuración Textos ---
   const cargarConfiguracion = async () => {
     try {
-      const res = await fetch('http://127.0.0.1:5000/api/configuracion');
+      const res = await fetch('https://sibrianstudio-backend-frontend.onrender.com/api/configuracion');
       if (res.ok) {
         const data = await res.json();
         setConfig(data);
@@ -192,7 +192,7 @@ export default function Admin() {
     
     if (heroImage) formData.append('hero_image', heroImage);
 
-    const res = await fetch('http://127.0.0.1:5000/api/configuracion', {
+    const res = await fetch('https://sibrianstudio-backend-frontend.onrender.com/api/configuracion', {
       method: 'PUT',
       headers: { 'Authorization': `Bearer ${token}` },
       body: formData
